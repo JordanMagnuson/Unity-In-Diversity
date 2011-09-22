@@ -12,16 +12,16 @@ package
 	public class Player extends TopDownMover
 	{
 		
-		public var circle01:CircleEntity;
-		public var circle02:CircleEntity;
-		public var circle03:CircleEntity;
+		public var redCircle:CircleEntity;
+		public var blueCircle:CircleEntity;
+		public var yellowCircle:CircleEntity;
 		
 		public function Player(x:Number = 0, y:Number = 0) 
 		{
 			super(500, x, y, Image.createCircle(4, Colors.GREEN));
-			FP.world.add(circle01 = new CircleEntity(x, y, 90, Colors.RED));
-			FP.world.add(circle02 = new CircleEntity(x, y, 210, Colors.YELLOW));
-			FP.world.add(circle03 = new CircleEntity(x, y, 330, Colors.BLUE));			
+			FP.world.add(redCircle = new CircleEntity(x, y, 90, Colors.RED));
+			FP.world.add(yellowCircle = new CircleEntity(x, y, 210, Colors.YELLOW));
+			FP.world.add(blueCircle = new CircleEntity(x, y, 330, Colors.BLUE));			
 		}
 		
 		override public function added():void
@@ -44,9 +44,9 @@ package
 		{
 			//Draw.circlePlus(x, y, 4, Colors.RED, 1, true);
 			//super.render();
-			circle01.render();
-			circle02.render();
-			circle03.render();
+			redCircle.render();
+			blueCircle.render();
+			yellowCircle.render();
 		}
 		
 	}

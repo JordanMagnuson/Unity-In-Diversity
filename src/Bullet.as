@@ -38,6 +38,8 @@ package
 			move(FP.elapsed * speed, direction);
 			//if (checkOffScreen()) 
 				//destroy();
+			if (distanceFrom(Global.player) > FP.width / 2)
+				destroy();
 			wrap();
 			super.update();
 		}

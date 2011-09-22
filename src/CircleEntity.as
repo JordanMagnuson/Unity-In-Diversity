@@ -13,14 +13,17 @@ package
 	{	
 		public static const DEFAULT_RADIUS:Number = 20;
 		public static const MIN_RADIUS:Number = 10;
-		public static const MAX_RADIUS:Number = 40;
-		public static const RADIUS_CHANGE_SPEED:Number = 0.05;
+		public static const MAX_RADIUS:Number = 400;
+		public static const RADIUS_CHANGE_SPEED:Number = 0.03;
 		
 		public static const DEFAULT_DISTANCE:Number = 10
 		public static const MIN_DISTANCE:Number = 10;
 		public static const MAX_DISTANCE:Number = 50;
-		public static const DISTANCE_CHANGE_SPEED:Number = 0.2;
+		public static const DISTANCE_CHANGE_SPEED:Number = 0.1;
 		
+		public var health:Number = 100;
+		public var healthTarget:Number = 100;
+		public var HEALTH_CHANGE_DIVISOR:Number = 100;
 		
 		public var radius:Number;
 		public var orbitPoint:Point;
@@ -50,6 +53,9 @@ package
 		{
 			super.update();
 			
+			// Health
+			healthTarget -= Global.HEALTH_DROP_PER_FRAME;
+			
 			// Position
 			orbitPoint.x = Global.player.x;
 			orbitPoint.y = Global.player.y;
@@ -71,41 +77,30 @@ package
 		public function updateRadiusDistance():void
 		{
 			
-			var change:Number;
-			switch (color)
-			{
-				case Colors.RED:
-					change = (Global.percentRed - 1 / 3);
-					break;
-				case Colors.YELLOW:
-					change = (Global.percentYellow - 1 / 3);
-					break;
-				case Colors.BLUE:
-					change = (Global.percentBlue - 1 / 3);
-					break;
-				default:
-					break;
-			}
+			var change:Number = healthTarget - health;
+			if (Math.abs(change) < 0.2)
+				return;
+			//trace('change: ' + change);
 			
 			// Return to defaults if within buffer range of balanced
-			if (Math.abs(change) < Global.PERCENT_BUFFER)
-			{
-				if (radius < DEFAULT_RADIUS - RADIUS_CHANGE_SPEED)
-					radius += RADIUS_CHANGE_SPEED;
-				else if (radius > DEFAULT_RADIUS + RADIUS_CHANGE_SPEED)
-					radius -= RADIUS_CHANGE_SPEED;
-				else
-					radius = DEFAULT_RADIUS;
-					
-				if (distance < DEFAULT_DISTANCE - DISTANCE_CHANGE_SPEED)
-					distance += DISTANCE_CHANGE_SPEED;
-				else if (distance > DEFAULT_DISTANCE + DISTANCE_CHANGE_SPEED)
-					distance -= DISTANCE_CHANGE_SPEED;	
-				else
-					distance = DEFAULT_DISTANCE;
-					
-				return;
-			}
+			//if (Math.abs(change) < Global.PERCENT_BUFFER)
+			//{
+				//if (radius < DEFAULT_RADIUS - RADIUS_CHANGE_SPEED)
+					//radius += RADIUS_CHANGE_SPEED;
+				//else if (radius > DEFAULT_RADIUS + RADIUS_CHANGE_SPEED)
+					//radius -= RADIUS_CHANGE_SPEED;
+				//else
+					//radius = DEFAULT_RADIUS;
+					//
+				//if (distance < DEFAULT_DISTANCE - DISTANCE_CHANGE_SPEED)
+					//distance += DISTANCE_CHANGE_SPEED;
+				//else if (distance > DEFAULT_DISTANCE + DISTANCE_CHANGE_SPEED)
+					//distance -= DISTANCE_CHANGE_SPEED;	
+				//else
+					//distance = DEFAULT_DISTANCE;
+					//
+				//return;
+			//}
 			
 			// Radius
 			radius += RADIUS_CHANGE_SPEED * FP.sign(change);
@@ -119,7 +114,11 @@ package
 			if (distance < MIN_DISTANCE)
 				distance = MIN_DISTANCE;
 			else if (distance > MAX_DISTANCE)
-				distance = MAX_DISTANCE;			
+				distance = MAX_DISTANCE;		
+				
+			health += change / HEALTH_CHANGE_DIVISOR;
+			if (health < 1) 
+				health = 1;
 		}
 		
 		override public function render():void

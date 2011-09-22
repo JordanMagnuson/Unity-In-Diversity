@@ -14,6 +14,8 @@ package
 		public static var numberOfAsteroids:Number;
 		
 		// Level variables
+		public static const HEALTH_DROP_PER_FRAME:Number = 0.01;
+		
 		public static var totalRed:Number;
 		public static var totalBlue:Number;
 		public static var totalYellow:Number;

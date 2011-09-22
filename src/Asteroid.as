@@ -87,11 +87,24 @@ package
 		public function destroy():void
 		{
 			if (color == Colors.RED) 
-				Global.totalRed += size;			
+			{
+				Global.player.redCircle.healthTarget += size / 10;
+				trace('red health: ' + Global.player.redCircle.health);
+				trace('red health target: ' + Global.player.redCircle.healthTarget);
+				trace('red radius: ' + Global.player.redCircle.radius);
+			}
 			else if (color == Colors.YELLOW) 
-				Global.totalYellow += size;
+			{
+				Global.player.yellowCircle.healthTarget += size / 10;	
+				trace('yellow health: ' + Global.player.yellowCircle.health);
+				trace('yellow health target: ' + Global.player.yellowCircle.healthTarget);				
+			}
 			else if (color == Colors.BLUE) 
-				Global.totalBlue += size;				
+			{
+				Global.player.blueCircle.healthTarget += size / 10;	
+				trace('blue health: ' + Global.player.blueCircle.health);
+				trace('blue health target: ' + Global.player.blueCircle.healthTarget);					
+			}
 			Global.game.updateColorPercents();
 			
 			FP.world.remove(this);
