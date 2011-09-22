@@ -102,25 +102,26 @@ package
 			super.render();
 			var oldX:Number = FP.camera.x;
 			var oldY:Number = FP.camera.y;
+			var buffer:Number = 50;
 			
 			// The second part of these if queries, after the || is to have a small buffer on the other side, to avoid flashes passing the border
 			
 			// Left
-			if (Global.player.x < FP.halfWidth || Global.player.x > (Game.width - 20))
+			if (Global.player.x - buffer < FP.halfWidth || Global.player.x > (Game.width - buffer))
 			{
 				FP.camera.x = oldX + Game.width;
 				FP.camera.y = oldY;
 				super.render();
 				
 				// Top left corner
-				if (Global.player.y < FP.halfHeight || Global.player.y > (Game.height - 20))
+				if (Global.player.y - buffer < FP.halfHeight || Global.player.y > (Game.height - buffer))
 				{
 					FP.camera.x = oldX + Game.width;
 					FP.camera.y = oldY + Game.height;
 					super.render();					
 				}
 				// Bottom left corner
-				if (Global.player.y > (Game.height - FP.halfHeight) || Global.player.y < 20)
+				if (Global.player.y + buffer > (Game.height - FP.halfHeight) || Global.player.y < buffer)
 				{
 					FP.camera.x = oldX + Game.width;
 					FP.camera.y = oldY - Game.height;
@@ -128,21 +129,21 @@ package
 				}				
 			}
 			// Right
-			if (Global.player.x > (Game.width - FP.halfWidth) || Global.player.x < 20)
+			if (Global.player.x + buffer > (Game.width - FP.halfWidth) || Global.player.x < buffer)
 			{
 				FP.camera.x = oldX - Game.width;
 				FP.camera.y = oldY;
 				super.render();
 				
 				// Top right corner
-				if (Global.player.y < FP.halfHeight || Global.player.y > (Game.height - 20))
+				if (Global.player.y - buffer < FP.halfHeight || Global.player.y > (Game.height - buffer))
 				{
 					FP.camera.x = oldX - Game.width;
 					FP.camera.y = oldY + Game.height;
 					super.render();					
 				}
 				// Bottom right corner
-				if (Global.player.y > (Game.height - FP.halfHeight) || Global.player.y < 20)
+				if (Global.player.y + buffer > (Game.height - FP.halfHeight) || Global.player.y < buffer)
 				{
 					FP.camera.x = oldX - Game.width;
 					FP.camera.y = oldY - Game.height;
@@ -150,14 +151,14 @@ package
 				}					
 			}
 			// Top
-			if (Global.player.y < FP.halfHeight || Global.player.y > (Game.height - 20))
+			if (Global.player.y - buffer < FP.halfHeight || Global.player.y > (Game.height - buffer))
 			{
 				FP.camera.x = oldX;
 				FP.camera.y = oldY + Game.height;
 				super.render();
 			}
 			// Bottom
-			if (Global.player.y > (Game.height - FP.halfHeight) || Global.player.y < 20)
+			if (Global.player.y + buffer > (Game.height - FP.halfHeight) || Global.player.y < buffer)
 			{
 				FP.camera.x = oldX;
 				FP.camera.y = oldY - Game.height;

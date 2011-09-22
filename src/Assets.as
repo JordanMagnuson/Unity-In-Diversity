@@ -7,7 +7,7 @@ package
 	public class Assets 
 	{
 		
-		[Embed(source='../assets/background04.png')] public static const BACKGROUND:Class;
+		[Embed(source='../assets/background05.png')] public static const BACKGROUND:Class;
 		
 	}
 
