@@ -12,7 +12,7 @@ package
 	public class CircleEntity extends Entity
 	{	
 		public static const DEFAULT_RADIUS:Number = 20;
-		public static const MIN_RADIUS:Number = 10;
+		public static const MIN_RADIUS:Number = 1;
 		public static const MAX_RADIUS:Number = 400;
 		public static const RADIUS_CHANGE_SPEED:Number = 0.03;
 		
@@ -21,21 +21,24 @@ package
 		public static const MAX_DISTANCE:Number = 50;
 		public static const DISTANCE_CHANGE_SPEED:Number = 0.1;
 		
-		public var health:Number = 100;
+		public var health:Number = 25;
 		public var healthTarget:Number = 100;
-		public var HEALTH_CHANGE_DIVISOR:Number = 100;
+		public var HEALTH_CHANGE_DIVISOR:Number = 100000;
 		
 		public var radius:Number;
-		public var orbitPoint:Point;
+		public var targetRadius:Number;
 		public var distance:Number;
+		public var targetDistance:Number;
+		
+		public var orbitPoint:Point;
 		public var direction:Number;
 		public var color:uint;
 		
 		public function CircleEntity(orbitPointX:Number = 0, orbitPointY:Number = 0, direction:Number = 0, color:uint = 0xFFFFFF) 
 		{
 			this.type = 'circle_entity';
-			this.radius = DEFAULT_RADIUS;
-			this.distance = DEFAULT_DISTANCE;
+			this.radius = health;
+			this.distance = health / 2;
 			this.orbitPoint = new Point(orbitPointX, orbitPointY);
 			this.direction = direction;
 			this.color = color;
@@ -54,7 +57,7 @@ package
 			super.update();
 			
 			// Health
-			healthTarget -= Global.HEALTH_DROP_PER_FRAME;
+			health -= Global.HEALTH_DROP_PER_FRAME;
 			
 			// Position
 			orbitPoint.x = Global.player.x;
@@ -76,10 +79,6 @@ package
 		
 		public function updateRadiusDistance():void
 		{
-			
-			var change:Number = healthTarget - health;
-			if (Math.abs(change) < 0.2)
-				return;
 			//trace('change: ' + change);
 			
 			// Return to defaults if within buffer range of balanced
@@ -103,22 +102,23 @@ package
 			//}
 			
 			// Radius
-			radius += RADIUS_CHANGE_SPEED * FP.sign(change);
+			//targetRadius = MIN_RADIUS + (health * (MAX_RADIUS - MIN_RADIUS));
+			targetRadius = health;
+			var radiusChange:Number = targetRadius - radius;
+			radius += RADIUS_CHANGE_SPEED * FP.sign(radiusChange);
 			if (radius < MIN_RADIUS)
 				radius = MIN_RADIUS;
 			else if (radius > MAX_RADIUS)
 				radius = MAX_RADIUS;
 			
 			// Distance
-			distance -= DISTANCE_CHANGE_SPEED * FP.sign(change);
+			targetDistance = health / 2;
+			var distanceChange:Number = targetDistance - distance;
+			distance += DISTANCE_CHANGE_SPEED * FP.sign(distanceChange);
 			if (distance < MIN_DISTANCE)
 				distance = MIN_DISTANCE;
 			else if (distance > MAX_DISTANCE)
 				distance = MAX_DISTANCE;		
-				
-			health += change / HEALTH_CHANGE_DIVISOR;
-			if (health < 1) 
-				health = 1;
 		}
 		
 		override public function render():void

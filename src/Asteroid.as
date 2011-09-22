@@ -88,20 +88,20 @@ package
 		{
 			if (color == Colors.RED) 
 			{
-				Global.player.redCircle.healthTarget += size / 10;
+				Global.player.redCircle.health += size / 10;
 				trace('red health: ' + Global.player.redCircle.health);
 				trace('red health target: ' + Global.player.redCircle.healthTarget);
 				trace('red radius: ' + Global.player.redCircle.radius);
 			}
 			else if (color == Colors.YELLOW) 
 			{
-				Global.player.yellowCircle.healthTarget += size / 10;	
+				Global.player.yellowCircle.health += size / 10;	
 				trace('yellow health: ' + Global.player.yellowCircle.health);
 				trace('yellow health target: ' + Global.player.yellowCircle.healthTarget);				
 			}
 			else if (color == Colors.BLUE) 
 			{
-				Global.player.blueCircle.healthTarget += size / 10;	
+				Global.player.blueCircle.health += size / 10;	
 				trace('blue health: ' + Global.player.blueCircle.health);
 				trace('blue health target: ' + Global.player.blueCircle.healthTarget);					
 			}
