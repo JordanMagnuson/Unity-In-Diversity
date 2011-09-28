@@ -39,6 +39,9 @@ package
 			
 			if (Input.mousePressed)
 			{
+				//Global.player.redCircle.fireBullet();
+				//Global.player.yellowCircle.fireBullet();
+				//Global.player.blueCircle.fireBullet();
 				nearestCircleEntity = FP.world.nearestToEntity('circle_entity', this, false) as CircleEntity;
 				nearestCircleEntity.fireBullet();
 			}

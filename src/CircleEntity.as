@@ -1,9 +1,14 @@
 package  
 {
+	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import net.flashpunk.Entity;
+	import net.flashpunk.masks.Pixelmask;
+	import net.flashpunk.tweens.misc.ColorTween;
 	import net.flashpunk.utils.Draw;
 	import net.flashpunk.FP;
+	import flash.display.BlendMode;
+	import net.flashpunk.graphics.Image;
 	
 	/**
 	 * ...
@@ -18,7 +23,7 @@ package
 		
 		public static const DEFAULT_DISTANCE:Number = 10
 		public static const MIN_DISTANCE:Number = 10;
-		public static const MAX_DISTANCE:Number = 50;
+		public static const MAX_DISTANCE:Number = 400;
 		public static const DISTANCE_CHANGE_SPEED:Number = 0.1;
 		
 		public var health:Number = 25;
@@ -29,10 +34,17 @@ package
 		public var targetRadius:Number;
 		public var distance:Number;
 		public var targetDistance:Number;
+		public var bulletSize:Number;
 		
 		public var orbitPoint:Point;
 		public var direction:Number;
 		public var color:uint;
+		
+		public var colorTween:ColorTween;
+		
+		public var maskImage:Image;
+		public var maskBitmapData:BitmapData;
+		public var maskOffset:Point = new Point;
 		
 		public function CircleEntity(orbitPointX:Number = 0, orbitPointY:Number = 0, direction:Number = 0, color:uint = 0xFFFFFF) 
 		{
@@ -42,6 +54,20 @@ package
 			this.orbitPoint = new Point(orbitPointX, orbitPointY);
 			this.direction = direction;
 			this.color = color;
+			
+			colorTween = new ColorTween;
+			colorTween.color = this.color;
+			
+			//maskImage = Image.createCircle(radius + distance);
+			//maskImage.centerOrigin();
+			//maskOffset.x = maskImage.width / 2;
+			//maskOffset.y = maskImage.height / 2;
+			//maskBitmapData = new BitmapData(maskImage.width, maskImage.height, true, 0);
+			//maskImage.render(maskBitmapData, FP.zero, FP.zero);
+			//
+			//mask = new Pixelmask(maskBitmapData);
+			
+			
 			//speed = 20;
 			//super(FP.halfWidth, FP.halfHeight, speed);
 			
@@ -49,15 +75,32 @@ package
 		
 		override public function added():void
 		{
+			addTween(colorTween);
 			super.added();
 		}
 		
 		override public function update():void
 		{
+			// Super
 			super.update();
 			
 			// Health
-			health -= Global.HEALTH_DROP_PER_FRAME;
+			health -= Global.healthDropPerFrame;
+			
+			// Food
+			var f:Food = collide('food', x, y) as Food;
+			if (f)
+			{
+				trace('collide food');
+				if (f.color == this.color)
+				{
+					f.destroy();
+					health += 10;
+					Global.player.redCircle.flashColor(f.color);
+					Global.player.yellowCircle.flashColor(f.color);
+					Global.player.blueCircle.flashColor(f.color);
+				}
+			}
 			
 			// Position
 			orbitPoint.x = Global.player.x;
@@ -66,22 +109,60 @@ package
 			this.y = orbitPoint.y - distance * Math.sin(direction * Math.PI / 180);	// Minus here, because negative is up	
 			
 			// Radius and Distance
-			updateRadiusDistance();
+			updateRadius();
+			updateDistance();
+			
+			// Rotate
+			direction += Global.rotationSpeed;
+			
+			// Hitbox
+			//mask = new Pixelmask(Image.createCircle(distance));
+			originX = radius;
+			originY = radius;
+			width = height = radius * 2;			
+			
+			// Bullet size
+			bulletSize = Math.ceil(width / 10);
+		}
 		
-			//orbitRadius = distance;
+		public function flashColor(color:uint, duration:Number = 2):void
+		{
+			colorTween.tween(duration, color, this.color);
 		}
 		
 		public function fireBullet():void
 		{
 			trace('fire bullet');
-			FP.world.add(new Bullet(x, y, color));
+			FP.world.add(new Bullet(x, y, color, bulletSize));
 		}
 		
-		public function updateRadiusDistance():void
+		public function updateRadius():void
 		{
+			targetRadius = health;
+			var radiusChange:Number = targetRadius - radius;
+			radius += RADIUS_CHANGE_SPEED * FP.sign(radiusChange);
+			if (radius < MIN_RADIUS)
+				radius = MIN_RADIUS;
+			else if (radius > MAX_RADIUS)
+				radius = MAX_RADIUS;			
+		}
+		
+		public function updateDistance():void
+		{
+			targetDistance = health / 2;
+			var distanceChange:Number = targetDistance - distance;
+			distance += DISTANCE_CHANGE_SPEED * FP.sign(distanceChange);
+			if (distance < MIN_DISTANCE)
+				distance = MIN_DISTANCE;
+			else if (distance > MAX_DISTANCE)
+				distance = MAX_DISTANCE;				
+		}
+		
+		//public function updateRadiusDistance():void
+		//{
 			//trace('change: ' + change);
-			
-			// Return to defaults if within buffer range of balanced
+			//
+			 //Return to defaults if within buffer range of balanced
 			//if (Math.abs(change) < Global.PERCENT_BUFFER)
 			//{
 				//if (radius < DEFAULT_RADIUS - RADIUS_CHANGE_SPEED)
@@ -100,30 +181,20 @@ package
 					//
 				//return;
 			//}
-			
-			// Radius
-			//targetRadius = MIN_RADIUS + (health * (MAX_RADIUS - MIN_RADIUS));
-			targetRadius = health;
-			var radiusChange:Number = targetRadius - radius;
-			radius += RADIUS_CHANGE_SPEED * FP.sign(radiusChange);
-			if (radius < MIN_RADIUS)
-				radius = MIN_RADIUS;
-			else if (radius > MAX_RADIUS)
-				radius = MAX_RADIUS;
-			
-			// Distance
-			targetDistance = health / 2;
-			var distanceChange:Number = targetDistance - distance;
-			distance += DISTANCE_CHANGE_SPEED * FP.sign(distanceChange);
-			if (distance < MIN_DISTANCE)
-				distance = MIN_DISTANCE;
-			else if (distance > MAX_DISTANCE)
-				distance = MAX_DISTANCE;		
-		}
+			//
+			 //Radius
+			//targetRadius = MIN_RADIUS + (health * (MAX_RADIUS - MIN_RADIUS));	
+		//}
 		
 		override public function render():void
 		{
-			Draw.circlePlus(x, y, radius, color, 0.5, true);
+			//Draw.blend = BlendMode.ADD;
+			
+			// Outline
+			Draw.circlePlus(Global.player.x, Global.player.y, radius + distance, color, 1, false, 3);
+			
+			// Center
+			Draw.circlePlus(x, y, radius, colorTween.color, 0.5, true);
 		}		
 		
 	}

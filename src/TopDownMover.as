@@ -16,9 +16,9 @@ package
 		public var speed:Number;
 		public var image:Image;
 		
-		public function TopDownMover(speed:Number, x:Number = 0, y:Number = 0, image:Image = null) 
+		public function TopDownMover(x:Number = 0, y:Number = 0, image:Image = null, speed:Number = 10) 
 		{
-			super(x, y, image);
+			super(x, y, graphic);
 			this.image = image;
 			this.speed = speed;
 			type = 'top_down_mover';

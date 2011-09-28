@@ -8,13 +8,16 @@ package
 	public class Global 
 	{	
 		public static const SCREEN_EDGE_BUFFER:Number = 100;	// Buffer at edge of screen, before destroying entities
+		public static const CAMERA_ZOOM_MIN:Number = 0.1;
+		public static const CAMERA_ZOOM_MAX:Number = 10;
 		
 		// Global variables
 		public static var level:Number = 0;
 		public static var numberOfAsteroids:Number;
 		
 		// Level variables
-		public static const HEALTH_DROP_PER_FRAME:Number = 0.01;
+		public static const healthDropPerFrame:Number = 0.01;
+		public static var rotationSpeed:Number = 0.5;
 		
 		public static var totalRed:Number;
 		public static var totalBlue:Number;

@@ -6,6 +6,8 @@ package
 	import net.flashpunk.World;
 	import net.flashpunk.FP;
 	import MouseController;
+	import net.flashpunk.utils.Input;
+	import net.flashpunk.utils.Key;
 	
 	/**
 	 * ...
@@ -15,6 +17,7 @@ package
 	{
 		public static var width:Number;
 		public static var height:Number;
+		public var zoom:Number = 1;
 		
 		public var background:Entity = new Entity(0, 0, new Backdrop(Assets.BACKGROUND));
 		public var asteroidAlarm:Alarm;
@@ -35,17 +38,44 @@ package
 		override public function begin():void
 		{
 			//add(new Entity(0, 0, new Backdrop(Assets.BACKGROUND)));
-			add(Global.player = new Player(Game.width / 2, Game.height / 2));
+			add(Global.player = new Player(50, 50));
 			add(Global.mouseController = new MouseController);
 			generateLevel();
 			addTween(asteroidAlarm, true);
+			
+			//FP.console.watch(Global.player.x, Global.player.y, Global.player.speed);
 		}
 		
 		override public function update():void
 		{
+			if (Input.pressed(Key.NUMPAD_ADD))
+			{
+				zoom += 0.1;
+				zoomTo(zoom);
+			}
+			else if (Input.pressed(Key.NUMPAD_SUBTRACT))
+			{
+				zoom -= 0.1;
+				zoomTo(zoom);
+			}			
+			
 			cameraFollow();
 			super.update();
 		}
+		
+		public function zoomTo(val:int):void
+		{
+			trace('zoom: ' + zoom);
+			FP.screen.scale = val;
+			//if (!((val < 0 && FP.screen.scale <= Global.CAMERA_ZOOM_MIN) || (val > 0 && FP.screen.scale >= Global.CAMERA_ZOOM_MAX)))
+			//{
+				//FP.screen.scale = val;
+				//width = Math.ceil(1 / FP.screen.scale * FP.width);
+				//height = Math.ceil(1 / FP.screen.scale * FP.height);
+				//snapToPlayer(level, player);
+				//FP.console.log(FP.camera.x, FP.camera.y, width, height);
+			//}
+		}		
 		
 		public function createAsteroid():void
 		{
